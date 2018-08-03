@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link rel="stylesheet"
+	href="https://cdn.bootcss.com/bootstrap/4.0.0-beta/css/bootstrap.min.css">
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script
+	src="https://cdn.bootcss.com/bootstrap/4.0.0-beta/js/bootstrap.min.js"></script>
+</head>
+<body>
+	<h3>WebSocket Test</h3>
+	<div class="row">
+		<div class="col-sm-3">
+			<button id="connect_btn" class="btn btn-info">连接</button>
+			<button id="colseConnBtn" class="btn btn-danger">关闭连接</button>
+		</div>
+		<div class="col-sm-3">
+		</div>
+	</div>
+	<hr >
+	<div class="row">
+		<div class="col-sm-3">
+			<input id="text" type="text" class="form-control" placeholder="请输入信息">
+		</div>
+		<div class="col-sm-1">
+			<button id="sendBtn" class="btn btn-success" onclick="send()">发送</button>
+		</div>
+	</div>
+	<hr>
+	<div style="max-height: 500px">
+		<ul class="list-group" id="message"></ul>
+	</div>
+</body>
+<script type="text/javascript">
+	var webSocket = null;
+
+	$("#connect_btn").click(function() {
+		if ('WebSocket' in window) {
+			websocket = new WebSocket("ws://localhost:8080/websocket");
+			
+			$("#connect_btn").attr('disabled',true);
+			
+			//连接发生错误的回调方法
+			websocket.onerror = function() {
+				setMessageInnerHTML("与服务器连接失败...");
+			};
+
+			//连接成功建立的回调方法
+			websocket.onopen = function(event) {
+				setMessageInnerHTML("与服务器连接成功...");
+			}
+
+			//接收到消息的回调方法
+			websocket.onmessage = function(event) {
+				setMessageInnerHTML(event.data);
+			}
+
+			//连接关闭的回调方法
+			websocket.onclose = function() {
+				setMessageInnerHTML("已关闭当前链接");
+			}
+
+			//监听窗口关闭事件，当窗口关闭时，主动去关闭websocket连接，防止连接还没断开就关闭窗口，server端会抛异常。
+			window.onbeforeunload = function() {
+				websocket.close();
+			}
+		} else {
+			alert("连接失败！当前浏览器不支持WebSocket!")
+		}
+	})
+	
+	$("#colseConnBtn").click(function(){
+		closeWebSocket();
+		$("#connect_btn").attr('disabled',false);
+	})
+	
+    //将消息显示在网页上
+    function setMessageInnerHTML(innerHTML) {
+        $("#message").append("<li class=\"list-group-item\">" + innerHTML + "</li>");
+    }
+
+    //关闭连接
+    function closeWebSocket() {
+        websocket.close();
+    }
+
+    //发送消息
+    function send() {
+    	var message = $("#text").val()
+        websocket.send(message);
+    	//alert(message)
+    }
+    
+</script>
+
+</html>
