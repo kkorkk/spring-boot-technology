@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>element的表格组件</title>
+</head>
+
+<!-- 引入样式 -->
+<link rel="stylesheet" href="//cdn.bootcss.com/zui/1.8.1/css/zui.min.css">
+<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+<!-- 引入组件库 -->
+<script src="/vue.js"></script>
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue-resource@1.5.1"></script>
+
+<body>
+<div id="app">
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+            <!-- 导航头部 -->
+            <div class="navbar-header">
+                <a class="navbar-brand" href="">element的表格组件</a>
+            </div>
+            <!-- 导航项目 -->
+            <div class="collapse navbar-collapse navbar-collapse-example">
+            </div><!-- END .navbar-collapse -->
+        </div>
+    </nav>
+    <el-row>
+        <el-col :span="16" :offset="4">
+            <el-card class="box-card">
+                <div slot="header" class="clearfix">
+                    <span style="font-size: 15px">用户信息</span>
+                    <el-button @click="showAddUserForm()" icon="el-icon-circle-plus" style="float: right; padding: 3px 0" type="text">添加</el-button>
+                </div>
+                <div>
+                    <el-table :data="userDataList" :stripe="true" height="300">
+                        <el-table-column prop="id" label="ID" width="100"></el-table-column>
+                        <el-table-column prop="name" label="姓名" width="100"></el-table-column>
+                        <el-table-column prop="age" label="年龄" width="100"></el-table-column>
+                        <el-table-column prop="address" label="地址" width="200"></el-table-column>
+                        <el-table-column prop="createdDate" label="创建时间" width="100"></el-table-column>
+                        <el-table-column prop="remark" label="备注" width="100"></el-table-column>
+                        <el-table-column label="操作">
+                            <template slot-scope="scope">
+                                <el-button icon="el-icon-edit" size="mini" type="primary" circle @click="handleEdit(scope.$index, scope.row)"></el-button>
+                                <el-button icon="el-icon-delete" size="mini" type="danger" circle @click="handleDelete(scope.$index, scope.row)"></el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </div>
+            </el-card>
+            <el-dialog title="添加用户" :visible.sync="dialogVisible" width="35%" >
+                <span>
+                    <el-form ref="form" :model="user" label-width="20%">
+                        <el-form-item label="姓名" :rules="[{required:true,message:'姓名不能为空'}]">
+                            <el-input v-model="user.name" style="width: 60%"></el-input>
+                        </el-form-item>
+                        <el-form-item label="年龄">
+                            <el-input v-model="user.age" style="width: 60%"></el-input>
+                        </el-form-item>
+                        <el-form-item label="地址">
+                            <el-input v-model="user.address" style="width: 60%"></el-input>
+                        </el-form-item>
+                    </el-form>
+                </span>
+                <span slot="footer" class="dialog-footer">
+                    <el-button @click="dialogVisible = false"> 取消</el-button>
+                    <el-button type="primary" @click="commitConfirm()">确 定</el-button>
+                </span>
+            </el-dialog>
+        </el-col>
+    </el-row>
+</div>
+</body>
+
+<script>
+    new Vue({
+        el: '#app',
+        data: function () {
+            return {
+                dialogVisible:false,
+                user:{},
+                userDataList:[]
+            }
+        },
+        methods:{
+            handleDelete(index,row){
+                this.$confirm('是否删除？','提示',{
+                    confirmButtonText:'确定',
+                    cancelButtonText:'取消',
+                    type:'warning'
+                }).then( ()=> {
+                    var sendData = {}
+                    sendData.id = row.id
+                    this.$http.post('/delete',JSON.stringify(sendData),{headers:{'Content-Type':'application/json'}}).then(function (resp) {
+                        this.initUserDataList()
+                        this.$message({
+                            message: '删除成功！',
+                            type: 'success'
+                        })
+                    })
+                })
+                .catch(function () {
+
+                })
+            },
+            commitConfirm(){
+                this.$http.post('/add',JSON.stringify(this.user),{headers:{'Content-Type':'application/json'}}).then(function (resp) {
+                    var data = resp.data
+                    if(data.retCode == '0'){
+                        this.dialogVisible = false
+                        this.$message({
+                            message: '添加成功！',
+                            type: 'success'
+                        });
+                        this.initUserDataList()
+                    }
+                })
+            },
+            initUserDataList(){
+                this.$http.get('/user_list').then(function (resp) {
+                    var data = resp.data
+                    if(data.retCode == '0'){
+                        this.userDataList = data.data
+                    }
+                })
+            },
+            showAddUserForm(){
+                this.dialogVisible = true
+                this.user = {}
+            },
+
+        },
+        mounted:function () {
+            this.initUserDataList()
+        }
+    })
+</script>
+
+</html>

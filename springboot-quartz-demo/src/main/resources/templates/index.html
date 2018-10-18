@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+</head>
+
+<script src="/jquery.js"></script>
+<script src="/bootstrap.js"></script>
+<script src="/bootstrap-table.min.js"></script>
+<script src="/bootstrap-table-zh-CN.min.js"></script>
+
+<link rel="stylesheet" href="/bootstrap.css">
+<link rel="stylesheet" href="/bootstrap-table.min.css">
+
+<body>
+    <nav class="navbar navbar-default">
+        <div class="navbar-brand">动态任务平台</div>
+        <ul class="navbar-right">
+        </ul>
+    </nav>
+    <div class="row">
+        <div class="col-sm-offset-1 col-sm-10">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title text-center">任务列表</h3>
+                </div>
+                <div class="panel-body">
+                    <div id="toolbar" class="btn-group">
+                        <button id="btn_add" type="button" class="btn btn-primary">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>添加
+                        </button>
+                        <button id="btn_edit" type="button" class="btn btn-primary">
+                            <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>修改
+                        </button>
+                        <button id="btn_delete" type="button" class="btn btn-primary">
+                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除
+                        </button>
+                    </div>
+
+                    <table data-toggle="table" id="table" data-height="400"
+                           data-classes="table table-hover" data-striped="true"
+                           data-pagination="true" data-side-pagination="server"
+                           data-search="true" data-show-refresh="true" data-show-toggle="false"
+                           data-show-columns="true" data-toolbar="#toolbar"
+                           data-show-fullscreen="true" data-searc="true">
+                        <thead>
+                        <tr>
+                            <th data-field="state" data-checkbox='ture'></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <div class="alert alert-success alert-dismissible" role="alert" style="text-align: center;z-index: 10" id="add_alert_success">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <strong>添加/修改成功！</strong>
+            </div>
+            <div class="alert alert-success alert-dismissible" role="alert" style="text-align: center;z-index: 10" id="delete_alert_success">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <strong>删除成功！</strong>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="add_modal">
+        <div class="modal-dialog" >
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">添加/修改任务</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form form-horizontal">
+                        <div class="form-group">
+                            <label class="control-label col-sm-3">任务名称</label>
+                            <div class="col-sm-5">
+                                <input type="text" class="form-control" id="add_form_job_name">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-3">任务分组</label>
+                            <div class="col-sm-5">
+                                <input type="text" class="form-control" id="add_form_job_group">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-3">任务类名称</label>
+                            <div class="col-sm-5">
+                                <input type="text" class="form-control" id="add_form_class_name">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-3">参数</label>
+                            <div class="col-sm-5">
+                                <input type="text" class="form-control" id="add_form_params">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-3">cron表达式</label>
+                            <div class="col-sm-5">
+                                <input type="text" class="form-control" id="add_form_cron_expression">
+                            </div>
+                            <button  class="btn btn-primary" id="cron_on_line_btn">在线cron表达式</button>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-3">备注</label>
+                            <div class="col-sm-5">
+                                <input type="text" class="form-control" id="add_form_remark">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" >取消</button>
+                    <button type="button" class="btn btn-primary" id="add_form_confirm">确定</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div>
+    </div>
+    <div class="modal fade " id="cron_on_line_modal">
+        <div class="modal-dialog modal-lg" >
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">在线cron表达式</h4>
+                </div>
+                <div class="modal-body">
+                    <iframe src="http://cron.qqe2.com/" width="850px" height="700px"></iframe>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" >关闭</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div>
+    </div>
+</body>
+
+<script>
+
+    var selectdUserId
+    var isUpdate = false
+    var jobId4Update
+
+    $(function () {
+        $('#add_alert_success').hide()
+        $('#delete_alert_success').hide()
+    })
+
+    $('#cron_on_line_btn').click(function () {
+        $('#cron_on_line_modal').modal('show')
+    })
+
+    $('#btn_add').click(function () {
+        $('#add_form_cron_expression').val('')
+        $('#add_form_params').val('')
+        $('#add_form_class_name').val('')
+        $('#add_form_job_group').val('')
+        $('#add_form_job_name').val('')
+        $('#add_form_remark').val('')
+        $('#add_modal').modal('show')
+    })
+
+    $('#add_form_confirm').click(function () {
+        var url = '/add'
+        var jobName = $('#add_form_job_name').val()
+        var jobGroup = $('#add_form_job_group').val()
+        var className = $('#add_form_class_name').val()
+        var params = $('#add_form_params').val()
+        var cronExpression = $('#add_form_cron_expression').val()
+        var remark = $('#add_form_remark').val()
+        var sendData = {
+            jobName:jobName,
+            jobGroup:jobGroup,
+            className:className,
+            params:params,
+            cronExpression:cronExpression,
+            remark:remark
+        }
+        if(isUpdate){
+            sendData.jobId = jobId4Update
+            isUpdate = false
+            url = '/update'
+        }
+        $.ajax({
+            type: "post",
+            url: url,
+            async: false, // 使用同步方式
+            data: JSON.stringify(sendData),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function(resp) {
+                $('#add_modal').modal('hide')
+                $('#table').bootstrapTable('refresh',{url:'job_list'})
+                $('#add_alert_success').show();
+                $('#add_alert_success').fadeOut(5000);
+            }
+        });
+    })
+
+    $("#table").bootstrapTable(
+    {
+        url : "job_list",    //数据请求路径
+        clickToSelect : true,  //点击表格项即可选择
+        dataType : "json",   //后端数据传递类型
+        pageSize : 5,
+        pageList : [ 5, 10, 20 ],
+        //	contentType : "application/x-www-form-urlencoded",
+        method : 'get',      //请求类型
+        dataField : "data",  //很重要，这是后端返回的实体数据！
+
+        //是否显示详细视图和列表视图的切换按钮
+        queryParams : function(params) {//自定义参数，这里的参数是传给后台的，我这是是分页用的
+            return {//这里的params是table提供的
+                offset : params.offset,//从数据库第几条记录开始
+                limit : params.limit
+                //找多少条
+            };
+        },
+        responseHandler : function(res) {
+            //在ajax获取到数据，渲染表格之前，修改数据源
+            return res;
+        },
+        columns : [
+            {
+                field : 'state',
+            },
+            {
+                field : 'jobId',
+                title : '任务ID',
+                align : 'center'
+            },
+            {
+                field : 'jobName',
+                title : '任务名称',
+                align : 'center'
+            },
+            {
+                field : 'jobGroup',
+                title : '任务分组',
+                align : 'center'
+            },
+            {
+                field : 'className',
+                title : '任务类名称',
+                align : 'center'
+            },
+            {
+                field : 'params',
+                title : '参数',
+                align : 'center'
+            },
+            {
+                field : 'cronExpression',
+                title : 'cron表达式',
+                align : 'center'
+            },
+            {
+                field : 'status',
+                title : '状态',
+                align : 'center',
+                formatter : function (value, row, index) {
+                    if(value == 1){
+                        var value = '<span class="label label-success">运行中</span>'
+                    }else if(value == 0){
+                        var value = '<span class="label label-default">未启动</span>'
+                    }
+                    return value
+                }
+            },
+            {
+                title : '操作',
+                field : 'id',
+                align : 'center',
+                formatter : function(value, row, index) {
+                    var edit = '<a class="btn btn-default btn-sm" href="#" mce_href="#" onclick="edit(\''
+                        + row.jobId + '\')"><span class="glyphicon glyphicon-pencil"></span>编辑</a> ';
+                    var del = '<a class="btn btn-danger btn-sm" href="#" mce_href="#" onclick="del(\''
+                        + row.jobId + '\')"><span class="glyphicon glyphicon-trash"></span>删除</a> ';
+                    var begin = '<a class="btn btn-primary btn-sm" href="#" mce_href="#" onclick="begin(\''
+                        + row.jobId + '\')"><span class="glyphicon glyphicon-play" ></span>启动</a> ';
+                    var pause = '<a class="btn btn-primary btn-sm" href="#" mce_href="#" onclick="pause(\''
+                        + row.jobId + '\')"><span class="glyphicon glyphicon-pause"></span>暂停</a> ';
+                    return edit + del + begin + pause;
+                }
+            } ]
+    });
+
+    function del(id) {
+        $.ajax({
+            type: "post",
+            url: '/delete',
+            async: false, // 使用同步方式
+            data: JSON.stringify({jobId:id}),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function(resp) {
+                $('#table').bootstrapTable('refresh',{url:'user_list'})
+                $('#delete_alert_success').show();
+                $('#delete_alert_success').fadeOut(3000);
+            }
+        });
+    }
+    
+    function edit(id) {
+        $.get('/job',{jobId:id},function (resp) {
+            if(resp.retCode == '0'){
+                isUpdate = true
+                var job = resp.data
+                $('#add_form_job_name').val(job.jobName)
+                $('#add_form_job_group').val(job.jobGroup)
+                $('#add_form_params').val(job.params)
+                $('#add_form_cron_expression').val(job.cronExpression)
+                $('#add_form_remark').val(job.remark)
+                $('#add_form_class_name').val(job.className)
+                jobId4Update = job.jobId
+                $('#add_modal').modal('show')
+            }
+        })
+    }
+
+    function begin(id){
+        $.get('/job',{jobId:id},function (resp) {
+            if(resp.retCode == '0'){
+                var job = resp.data
+                var status = job.status
+                if(status == 1){
+                    alert('任务已启动')
+                    return
+                }
+            }
+        })
+        $.ajax({
+            type: "post",
+            url: '/job_start',
+            async: false, // 使用同步方式
+            data: JSON.stringify({jobId:id}),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function(resp) {
+                location.reload()
+            }
+        });
+    }
+
+    function pause(id){
+        $.ajax({
+            type: "post",
+            url: '/job_pause',
+            async: false, // 使用同步方式
+            data: JSON.stringify({jobId:id}),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function(resp) {
+                location.reload()
+            }
+        });
+    }
+
+    $('#btn_delete').click(function () {
+        var selections = $('#table').bootstrapTable('getSelections')
+        if(selections.length<1){
+            alert('未选中行！')
+        }else{
+            console.log(selections)
+            var ids = []
+            for (var i = 0; i < selections.length; i++) {
+                ids.push(selections[i].jobId)
+            }
+            $.ajax({
+                type: "post",
+                url: '/batch_delete',
+                async: false, // 使用同步方式
+                data: JSON.stringify(ids),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(resp) {
+                    $('#table').bootstrapTable('refresh',{url:'job_list'})
+                    $('#delete_alert_success').show();
+                    $('#delete_alert_success').fadeOut(5000);
+
+                }
+            });
+        }
+    })
+
+    $('#btn_edit').click(function () {
+        isUpdate = true
+        var selections = $('#table').bootstrapTable('getSelections')
+        if(selections.length>1){
+            alert('不能同时修改多项')
+        }else if(selections.length==0){
+            alert('未选中行')
+        }else{
+            var job = selections[0]
+            $('#add_form_job_name').val(job.jobName)
+            $('#add_form_job_group').val(job.jobGroup)
+            $('#add_form_params').val(job.params)
+            $('#add_form_cron_expression').val(job.cronExpression)
+            $('#add_form_remark').val(job.remark)
+            $('#add_form_class_name').val(job.className)
+            jobId4Update = job.jobId
+            $('#add_modal').modal('show')
+        }
+    })
+
+</script>
+
+</html>
