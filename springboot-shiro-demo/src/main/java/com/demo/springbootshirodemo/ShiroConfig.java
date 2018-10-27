@@ -23,13 +23,16 @@ public class ShiroConfig {
         //拦截器
         Map<String,String> filterChainMap = new HashMap<>();
         filterChainMap.put("/login","anon");    //匿名访问登陆页面
+        filterChainMap.put("/register","anon");     //匿名访问注册页面
 //      filterChainMap.put("/static/**","anon");
         filterChainMap.put("/defaultKaptcha","anon");
+        filterChainMap.put("/favicon.ico","anon");
         filterChainMap.put("/css/**","anon");    //配置不拦截的链接  顺序判断
         filterChainMap.put("/js/**","anon");    //配置不拦截的链接  顺序判断
         filterChainMap.put("/img/**","anon");
-        filterChainMap.put("/","user"); //配置记住我或者认证后可以访问的地址
         filterChainMap.put("/doLogin","anon");
+        filterChainMap.put("/doRegister","anon");
+        filterChainMap.put("/","user"); //配置记住我或者认证后可以访问的地址
         filterChainMap.put("/logout","logout");     //配置退出过滤器
         filterChainMap.put("/**","authc");  //antuc表示需要认证，anno表示允许匿名访问
 

@@ -14,6 +14,9 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static com.demo.springbootshirodemo.common.CoreConstants.ALGORITHM_NAME;
+import static com.demo.springbootshirodemo.common.CoreConstants.HASH_ITERATIONS;
+
 public class MyRealm extends AuthorizingRealm {
 
     @Autowired
@@ -54,8 +57,8 @@ public class MyRealm extends AuthorizingRealm {
     @Override
     public void setCredentialsMatcher(CredentialsMatcher credentialsMatcher) {
         HashedCredentialsMatcher shaCredentialsMatcher = new HashedCredentialsMatcher();
-        shaCredentialsMatcher.setHashAlgorithmName("md5");
-        shaCredentialsMatcher.setHashIterations(1);
+        shaCredentialsMatcher.setHashAlgorithmName(ALGORITHM_NAME);
+        shaCredentialsMatcher.setHashIterations(HASH_ITERATIONS);
         shaCredentialsMatcher.setStoredCredentialsHexEncoded(true);
         super.setCredentialsMatcher(shaCredentialsMatcher);
     }

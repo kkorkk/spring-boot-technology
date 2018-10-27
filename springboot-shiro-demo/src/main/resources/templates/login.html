@@ -24,12 +24,11 @@
     }
 </style>
 <body >
-
-    <div style="width: 30%;height: 40%;margin-left: 35%;margin-top: 10%;">
+    <div style="width: 30%;height: 40%;margin-left: 60%;margin-top: 10%;">
         <div class="panel panel-default">
-            <div class="panel-heading" style="text-align: center">用户登陆</div>
+            <!--<div class="panel-heading" style="text-align: center">用户登陆</div>-->
             <div class="panel-body">
-                <div class="form form-horizontal">
+                <div class="form form-horizontal" style="margin-top: 5%">
                     <div class="form-group">
                         <label class="control-label col-sm-3">用户名</label>
                         <div class="col-sm-7">
@@ -73,7 +72,7 @@
                             <label class="control-label">记住我</label>
                         </div>
                         <div class="col-sm-5">
-                            <a href="">没有账号？立即注册</a>
+                            <a href="register">没有账号？立即注册</a>
                         </div>
                     </div>
                     <div class="form-group">
@@ -92,12 +91,19 @@
 <script>
 
     $(function () {
+        //初始化不显示警告信息
         $("#alarm4Username").hide();
         $("#alarm4Password").hide();
         $("#alarm4Kaptcha").hide();
+        //给验证码输入框绑定回车按键事件
+        $("#kaptchaText").keydown(function(e){
+            if(e.keyCode == 13){
+                login()
+            }
+        })
     })
 
-    $("#confirmBtn").click(function () {
+    function login(){
         var username = $("#username").val();
         var password = $("#password").val();
         var rememberMe = $("#rememberMe").is(":checked");
@@ -123,6 +129,10 @@
                 window.location.href="/index"
             }
         });
+    }
+
+    $("#confirmBtn").click(function () {
+        login()
     })
 
     $("#username").blur(function () {

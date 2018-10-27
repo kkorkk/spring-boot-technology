@@ -10,18 +10,22 @@ public class UserInfo implements Serializable {
     private static final long serialVersionUID = 5123636426792514942L;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer uid;
 
     @Column(unique = true)
-    private String username;    //账号
+    private String username;
 
-    private String name;        //名称
+    @Column
+    private String name;
 
+    @Column
     private String password;
 
+    @Column
     private String salt;
 
+    @Column
     private byte state;
 
     @ManyToMany(fetch = FetchType.EAGER)//立即从数据库中加载数据
