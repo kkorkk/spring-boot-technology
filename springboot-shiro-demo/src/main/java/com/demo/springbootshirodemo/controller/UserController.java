@@ -1,10 +1,9 @@
 package com.demo.springbootshirodemo.controller;
 
+import com.demo.springbootshirodemo.common.CoreConstants;
 import com.demo.springbootshirodemo.common.ResultVO;
-import com.demo.springbootshirodemo.entity.SysPermission;
-import com.demo.springbootshirodemo.entity.SysRole;
-import com.demo.springbootshirodemo.entity.UserInfo;
-import com.demo.springbootshirodemo.service.UserInfoService;
+import com.demo.springbootshirodemo.entity.SysUser;
+import com.demo.springbootshirodemo.service.SysUserService;
 import com.demo.springbootshirodemo.utils.MD5Util;
 import com.google.code.kaptcha.Constants;
 import com.google.code.kaptcha.Producer;
@@ -15,26 +14,19 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 
 import javax.imageio.ImageIO;
-import javax.management.relation.RoleInfo;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
-import static com.demo.springbootshirodemo.common.CoreConstants.PASSWORD_SALT;
-import static com.demo.springbootshirodemo.common.CoreConstants.USER_STATE;
 
 @Controller
 public class UserController {
@@ -43,7 +35,7 @@ public class UserController {
     private Producer producer;
 
     @Autowired
-    private UserInfoService userInfoService;
+    private SysUserService sysUserService;
 
     @RequestMapping("/login")
     public String login(){
@@ -123,16 +115,15 @@ public class UserController {
             result = ResultVO.ERROR("3","验证码错误");
         }else if(!Objects.equals(password,password2)){
             result = ResultVO.ERROR("4","密码输入不一致");
-        }else if(userInfoService.findByUsername(username)!=null){
+        }else if(sysUserService.findByUsername(username)!=null){
             result = ResultVO.ERROR("5","用户名已经存在");
         }else{
-            UserInfo userInfo = new UserInfo();
-            userInfo.setUsername(username);
-            userInfo.setSalt(PASSWORD_SALT);
-            userInfo.setState(USER_STATE);
-            userInfo.setPassword(MD5Util.getMD5Str(password));
-            userInfo.setUid(userInfoService.getMaxUId());
-            userInfoService.save(userInfo);
+            SysUser sysUser = new SysUser();
+            sysUser.setUsername(username);
+            sysUser.setSalt(CoreConstants.PASSWORD_SALT);
+            sysUser.setState(CoreConstants.USER_STATE_NORMAL);
+            sysUser.setPassword(MD5Util.getMD5Str(password));
+            sysUserService.save(sysUser);
         }
         return result;
     }
@@ -163,21 +154,20 @@ public class UserController {
     @ResponseBody
     public ResultVO menuList(){
         //获取userId
-        UserInfo userInfo = (UserInfo) SecurityUtils.getSubject().getPrincipal();
-        Integer userId = userInfo.getUid();
+        SysUser sysUser = (SysUser)SecurityUtils.getSubject().getPrincipal();
+        Integer userId = sysUser.getuId();
         //获取用户的权限列表
-        List<SysRole> sysRoleList = userInfo.getRoleList();
-        List<SysPermission> sysPermissionList = new ArrayList<>();
-        sysRoleList.stream().forEach(sysRole -> {
-            sysPermissionList.addAll(sysRole.getPermissionList());
-        });
-        //去掉重复
-        Set<SysPermission> sysPermissionSet = sysPermissionList
-                .stream()
-                .distinct()
-                .collect(Collectors.toSet());
         return null;
 
+    }
+
+    @GetMapping("/user_info")
+    @ResponseBody
+    public ResultVO userInfo(){
+        SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
+        sysUser.setPassword("");
+        sysUser.setSalt("");
+        return ResultVO.SUCCESS(sysUser);
     }
 
 

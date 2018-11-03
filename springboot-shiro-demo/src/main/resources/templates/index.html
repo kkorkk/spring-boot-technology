@@ -1,61 +1,131 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html>
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-    <script src="/js/jquery.min.js"></script>
-    <!--<script src="/js/bootstrap.min.js"></script>-->
-    <!-- ZUI 标准版压缩后的 CSS 文件 -->·
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/zui/1.8.1/css/zui.min.css">
-
-    <!-- ZUI Javascript 依赖 jQuery -->
-    <script src="//cdnjs.cloudflare.com/ajax/libs/zui/1.8.1/lib/jquery/jquery.js"></script>
-    <!-- ZUI 标准版压缩后的 JavaScript 文件 -->
-    <script src="//cdnjs.cloudflare.com/ajax/libs/zui/1.8.1/js/zui.min.js"></script>
+    <title>主页</title>
+    <!--import css-->
+    <!--<link rel="stylesheet" href="/css/element-index.css">-->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/core.css">
+    <link rel="stylesheet" href="/layui/css/layui.css">
 </head>
-<body style="background-color: #f9fcf5">
-    <nav class="navbar navbar-default">
-        <div class="navbar-header">
-            <a class="navbar-brand" href="javascript:void(0)">shiro-demo</a>
-        </div>
-        <div class="collapse navbar-collapse ">
-            <ul class="nav navbar-nav navbar-right">
-                <li>
-                   <a href="/logout">注销</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
-    <nav class="menu" data-ride="menu" style="width: 200px">
-        <ul id="treeMenu" class="tree tree-menu" data-ride="tree">
-            <li><a href="#"><i class="icon icon-th"></i>首页</a></li>
-            <li><a href="#"><i class="icon icon-user"></i>个人资料</a></li>
-            <li>
-                <a href="#"><i class="icon icon-time"></i>更新时间</a>
-                <ul>
-                    <li><a href="#">今天</a></li>
-                    <li><a href="#">明天</a></li>
-                    <li><a href="#">昨天</a></li>
-                    <li><a href="#">本周</a></li>
-                </ul>
-            </li>
-            <li><a href="#"><i class="icon icon-trash"></i>垃圾篓</a></li>
-            <li><a href="#"><i class="icon icon-list-ul"></i>全部</a></li>
-            <li class="open">
-                <a href="#"><i class="icon icon-tasks"></i>状态</a>
-                <ul>
-                    <li>
-                        <a href="#"><i class="icon icon-circle-blank"></i>已就绪</a>
-                        <ul>
-                            <li><a href="#">已取消</a></li>
-                            <li><a href="#">已关闭</a></li>
-                        </ul>
-                    </li>
-                    <li class="active"><a href="#"><i class="icon icon-play-sign"></i>进行中</a></li>
-                    <li><a href="#"><i class="icon icon-ok-sign"></i>已完成</a></li>
-                </ul>
-            </li>
-        </ul>
-</nav>
+
+<body>
+<div id="app">
+    <el-container style="min-height: 100%;border: 0;margin: 0;padding: 0">
+        <el-aside class="sidebar" v-bind:class="{'sidebar-collapse':isCollapse}">
+            <el-header>
+                <img src="/img/sys.png" style="float: left;height: 20px;width: 30px;margin-top: 20px">
+                <h1 style="color: #fff;font-size: 16px;float: right;line-height: 60px">KK权限管理系统</h1>
+            </el-header>
+            <el-menu
+                    background-color="#00152a"
+                    text-color="#fff"
+                    active-text-color="#ffd04b"
+                    style="border-right: 0;padding: 0"
+                    :collapse="isCollapse"
+                    :collapse-transition="false">
+                <el-submenu index="1" style="padding: 0">
+                    <template slot="title">
+                        <i class="el-icon-setting"></i>
+                        <!--<i class="fa fa-spin fa-cog fa-lg" style="margin-right: 10px"></i>-->
+                        <span>系统管理</span>
+                    </template>
+                    <el-menu-item-group>
+                        <el-menu-item index="1-1">部门管理</el-menu-item>
+                        <el-menu-item index="1-2">角色管理</el-menu-item>
+                        <el-menu-item index="1-3">菜单管理</el-menu-item>
+                    </el-menu-item-group>
+                </el-submenu>
+            </el-menu>
+        </el-aside>
+        <el-container>
+            <el-header style="line-height: 60px">
+                <span class="fa fa-reorder fa-lg" style="" @click="isCollapse=!isCollapse"></span>
+                <span class="fa fa-refresh fa-lg" style="margin-left: 30px" @click=""></span>
+                <div style="float: right">
+                    <el-dropdown style="color: #409EFF">
+                            <span class="el-dropdown-link">
+                                欢迎您,{{user.username}}<i class="el-icon-arrow-down el-icon--right"></i>
+                            </span>
+                        <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item>
+                                <span class="fa fa-power-off"></span>
+                                <a @click="dialogVisible=true">注销</a>
+                            </el-dropdown-item>
+                        </el-dropdown-menu>
+                    </el-dropdown>
+                </div>
+            </el-header>
+            <el-main >
+                <el-breadcrumb separator-class="el-icon-arrow-right">
+                    <el-breadcrumb-item>系统管理</el-breadcrumb-item>
+                </el-breadcrumb>
+                <div class="layui-tab" lay-filter="demo" lay-allowclose="true" >
+                    <ul class="layui-tab-title">
+                        <li class="layui-this" lay-id="11">网站设置</li>
+                        <li lay-id="22">用户管理</li>
+                        <li lay-id="33">权限分配</li>
+                        <li lay-id="44">商品管理</li>
+                        <li lay-id="55">订单管理</li>
+                    </ul>
+                    <div class="layui-tab-content">
+                        <div class="layui-tab-item layui-show">内容1</div>
+                        <div class="layui-tab-item">内容2</div>
+                        <div class="layui-tab-item">内容3</div>
+                        <div class="layui-tab-item">内容4</div>
+                        <div class="layui-tab-item">内容5</div>
+                    </div>
+                </div>
+            </el-main>
+        </el-container>
+    </el-container>
+    <el-dialog
+            title="提示"
+            :visible.sync="dialogVisible"
+            width="30%">
+        <span>真的要退出系统吗？</span>
+        <span slot="footer" class="dialog-footer">
+            <el-button @click="dialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="logout()">确 定</el-button>
+        </span>
+    </el-dialog>
+</div>
 </body>
+
+<!--import js-->
+<script src="/js/vue.min.js"></script>
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="/layui/layui.all.js"></script>
+
+<script type="text/javascript">
+var vm = new Vue({
+        el: '#app',
+        data: function () {
+            return {
+                isCollapse: false,
+                dialogVisible: false,
+                user: {}
+            }
+        },
+        methods: {
+            logout: function () {
+                vm.dialogVisible = false
+                window.location.href="/logout"
+            }
+        },
+        created: function(){
+
+        },
+        mounted: function () {
+            axios.get('user_info').then(function (resp) {
+                vm.user = resp.data.data
+                console.log(vm.user)
+            })
+        }
+    })
+</script>
+
 </html>
